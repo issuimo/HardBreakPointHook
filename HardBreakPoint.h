@@ -23,10 +23,10 @@ public:
 		unsigned int LE : 1;     // 局部精确断点
 		unsigned int GE : 1;     // 全局精确断点
 		unsigned int reserved1 : 1; // 保留位
-		unsigned int RTM : 1;    // 受限事务内存
 		unsigned int reserved2 : 1; // 保留位
-		unsigned int GD : 1;     // 常规检测
-		unsigned int reserved3 : 2; // 保留位
+		unsigned int reserved3 : 1; // 保留位
+		unsigned int GD : 1;
+		unsigned int reserved4 : 2; // 保留位
 		unsigned int RW0 : 2;    // 断点条件0
 		unsigned int LEN0 : 2;   // 断点长度0
 		unsigned int RW1 : 2;    // 断点条件1
