@@ -73,7 +73,6 @@ public:
 
 	template<typename R, typename... Args>
 	static bool SetBreakPoint(R(*address)(Args...), R(*replacement)(Args...)) {
-		LOG_TRACE("挂钩函数: %p %p", address, replacement);
 		BreakPoint bp;
 		bp.original = address;
 		bp.replacement = replacement;
