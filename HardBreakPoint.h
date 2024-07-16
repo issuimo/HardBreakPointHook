@@ -49,10 +49,10 @@ public:
 			value |= dr7.LE << 8;
 			value |= dr7.GE << 9;
 			value |= dr7.reserved1 << 10;
-			value |= dr7.RTM << 11;
-			value |= dr7.reserved2 << 12;
+			value |= dr7.reserved2 << 11;
+			value |= dr7.reserved3 << 12;
 			value |= dr7.GD << 13;
-			value |= dr7.reserved3 << 14;
+			value |= dr7.reserved4 << 14;
 			value |= dr7.RW0 << 16;
 			value |= dr7.LEN0 << 18;
 			value |= dr7.RW1 << 20;
