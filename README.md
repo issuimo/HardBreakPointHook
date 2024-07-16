@@ -1,8 +1,8 @@
 # 硬件断点Hook
 # HardBreakPointHook
-> 最多四处断点\
-> Up to four breakpoints
-#### 使用方法
+> #### 最多四处断点
+> #### 可过内存校验
+### 使用方法
 ``` C++
 HardBreakPoint::Initialize();
 
