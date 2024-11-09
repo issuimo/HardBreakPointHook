@@ -189,15 +189,17 @@ public:
 	static R CallOrigin(R(*func)(Args...), Args... args) {
 		for (auto [fst, snd] : breakpoints) {
 			if (snd.replacement == func) {
+				R(*originalFunc)(Args...) = reinterpret_cast<R(*)(Args...)>(snd.original);
+				R(*replacementFunc)(Args...) = reinterpret_cast<R(*)(Args...)>(snd.replacement);
 				if constexpr (std::is_void_v<R>) {
-					RemoveBreakPointThread(GetCurrentThread(), reinterpret_cast<R(*)(Args...)>(snd.original));
-					reinterpret_cast<R(*)(Args...)>(snd.original)(args...);
-					SetBreakPointThread(GetCurrentThread(), reinterpret_cast<R(*)(Args...)>(snd.original), reinterpret_cast<R(*)(Args...)>(snd.replacement));
+					RemoveBreakPointThread(GetCurrentThread(), originalFunc);
+					originalFunc(args...);
+					SetBreakPointThread(GetCurrentThread(), originalFunc, replacementFunc);
 					return;
 				} else {
-					RemoveBreakPointThread(GetCurrentThread(), reinterpret_cast<R(*)(Args...)>(snd.original));
-					R ret = reinterpret_cast<R(*)(Args...)>(snd.original)(args...);
-					SetBreakPointThread(GetCurrentThread(), reinterpret_cast<R(*)(Args...)>(snd.original), reinterpret_cast<R(*)(Args...)>(snd.replacement));
+					RemoveBreakPointThread(GetCurrentThread(), originalFunc);
+					R ret = originalFunc(args...);
+					SetBreakPointThread(GetCurrentThread(), originalFunc, replacementFunc);
 					return ret;
 				}
 			}
