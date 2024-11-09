@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <Windows.h>
 #include <TlHelp32.h>
 #include "phmap.h"
@@ -96,7 +96,7 @@ public:
 						if (breakpoints.size() < 4) {
 
 
-							CONTEXT ctx = { 0 };
+							CONTEXT ctx = {};
 							ctx.ContextFlags = CONTEXT_ALL;
 							if (!GetThreadContext(hThread, &ctx)) {
 								ResumeThread(hThread);
@@ -144,12 +144,7 @@ public:
 
 	template<typename R, typename... Args>
 	static bool RemoveBreakPoint(R(*address)(Args...)) {
-		auto it = breakpoints.find(address);
-		if (it == breakpoints.end()) {
-			return false;
-		}
-
-		BreakPoint bp = it->second;
+		BreakPoint bp = breakpoints[address];
 		DWORD myId = GetCurrentThreadId();
 		auto threads = GetProcessThreads(GetCurrentProcessId());
 
@@ -161,7 +156,7 @@ public:
 				}
 				SuspendThread(hThread);
 
-				CONTEXT ctx = { 0 };
+				CONTEXT ctx = {};
 				ctx.ContextFlags = CONTEXT_ALL;
 				if (GetThreadContext(hThread, &ctx)) {
 					switch (bp.id) {
@@ -181,7 +176,7 @@ public:
 		}
 
 		bp_status[bp.id] = false;
-		breakpoints.erase(it);
+	    breakpoints.erase(address);
 		return true;
 	}
 
@@ -215,14 +210,8 @@ private:
 
 	template<typename R, typename... Args>
 	static bool RemoveBreakPointThread(HANDLE hThread, R(*address)(Args...)) {
-		auto it = breakpoints.find(address);
-		if (it == breakpoints.end()) {
-			return false;
-		}
-
-		BreakPoint bp = it->second;
-
-		CONTEXT ctx = { 0 };
+		BreakPoint bp = breakpoints[address];
+		CONTEXT ctx = {};
 		ctx.ContextFlags = CONTEXT_ALL;
 		if (GetThreadContext(hThread, &ctx)) {
 			switch (bp.id) {
@@ -234,11 +223,11 @@ private:
 			ctx.Dr7 = DR7::DR7ToDWORD(dr7);
 			ctx.ContextFlags = CONTEXT_ALL;
 			SetThreadContext(hThread, &ctx);
+			bp_status[bp.id] = false;
+			breakpoints.erase(address);
+			return true;
 		}
-
-		bp_status[bp.id] = false;
-		breakpoints.erase(it);
-		return true;
+		return false;
 	}
 
 	template<typename R, typename... Args>
@@ -248,7 +237,7 @@ private:
 			bp.original = address;
 			bp.replacement = replacement;
 
-			CONTEXT ctx = { 0 };
+			CONTEXT ctx = {};
 			ctx.ContextFlags = CONTEXT_ALL;
 			GetThreadContext(hThread, &ctx);
 
