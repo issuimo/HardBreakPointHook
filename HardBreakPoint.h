@@ -176,7 +176,7 @@ public:
 		}
 
 		bp_status[bp.id] = false;
-	    breakpoints.erase(address);
+	   	breakpoints.erase(address);
 		return true;
 	}
 
