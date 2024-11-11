@@ -93,7 +93,7 @@ public:
 						}
 						SuspendThread(hThread);
 
-						if (breakpoints.size() < 4) {
+						if (breakpoints.size() <= 4) {
 
 
 							CONTEXT ctx = {};
